@@ -118,7 +118,7 @@ class Relation extends Model
      * @param mixed $type
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeAcl($query, $action = 'read', $user = null)
+    public function scopeAcl($query, $action = CampaignPermission::ACTION_READ, $user = null)
     {
         // Use the User Permission Service to handle all of this easily.
         /** @var \App\Services\UserPermission $service */

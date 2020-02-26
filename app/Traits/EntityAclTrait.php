@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Facades\UserPermission;
+use App\Models\CampaignPermission;
 
 /**
  * Trait EntityAclTrait
@@ -21,7 +22,7 @@ trait EntityAclTrait
      * @param mixed $type
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeAcl($query, $action = 'read', $user = null)
+    public function scopeAcl($query, int $action = CampaignPermission::ACTION_READ, $user = null)
     {
 
         // Use the User Permission Service to handle all of this easily.

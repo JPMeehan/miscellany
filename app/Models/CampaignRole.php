@@ -87,12 +87,16 @@ class CampaignRole extends Model
         return $this->hasMany('App\Models\CampaignPermission', 'campaign_role_id');
     }
 
-    public function savePermissions($permissions = array())
+    /**
+     * @param array $permissions
+     */
+    public function savePermissions(array $permissions = [])
     {
         // Load existing
         $existing = [];
+        /** @var CampaignPermission $permission */
         foreach ($this->permissions as $permission) {
-            $existing[$permission->key] = $permission;
+            $existing[$permission->entity_type_id][$permission->action] = $permission;
         }
 
         // Loop on submitted form
@@ -100,25 +104,29 @@ class CampaignRole extends Model
             $permissions = [];
         }
 
-        foreach ($permissions as $key => $value) {
+        foreach ($permissions as $value) {
+            list($entity, $action) = explode('_', $value);
             // Check if exists
-            if (isset($existing[$key])) {
+            if (isset($existing[$entity][$action])) {
                 // Do nothing
-                unset($existing[$key]);
+                unset($existing[$entity][$action]);
             } else {
-                $permission = CampaignPermission::create([
-                    'key' => $key,
+                CampaignPermission::create([
                     'campaign_role_id' => $this->id,
-                    'table_name' => $value
+                    //'table_name' => ,
+                    'action' => $action,
+                    'entity_type_id' => $entity,
                 ]);
             }
         }
 
         // Delete existing that weren't updated
-        foreach ($existing as $permission) {
-            // Only delete if it's a "general" and not an entity specific permission
-            if (!is_numeric($permission->entityId())) {
-                $permission->delete();
+        foreach ($existing as $entity) {
+            foreach ($entity as $permission) {
+                // Only delete if it's a "general" and not an entity specific permission
+                if (!is_numeric($permission->entityId())) {
+                    $permission->delete();
+                }
             }
         }
     }

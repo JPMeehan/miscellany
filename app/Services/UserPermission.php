@@ -87,9 +87,9 @@ class UserPermission
 
     /**
      * Set the ACL action we want to test
-     * @param $action
+     * @param int $action
      */
-    public function action($action)
+    public function action(int $action)
     {
         $this->action = $action;
         return $this;
@@ -186,15 +186,15 @@ class UserPermission
     {
         // Loop through the permissions of the role to get any blanket _read permissions on entities
         /** @var CampaignPermission $permission */
-        foreach ($role->permissions as $permission) {
+        foreach ($role->permissions()->with('entityType')->get() as $permission) {
             // Only test permissions who's action is being requested
-            if ($permission->action() != $this->action) {
+            if ($permission->action != $this->action) {
                 continue;
             }
 
             if (empty($permission->entity_id)) {
                 // This permission targets an entity type
-                $type = Str::singular($permission->table_name);
+                $type = $permission->entityType->code;
                 if (!in_array($type, $this->entityTypes)) {
                     $this->entityTypes[] = $type;
                 }

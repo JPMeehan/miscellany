@@ -77,11 +77,11 @@ class CampaignVisibileEntityCount extends Command
         $types = $ids = [];
         /** @var CampaignPermission $permission */
         foreach ($public->permissions as $permission) {
-            if ($permission->action() == 'read') {
+            if ($permission->action == CampaignPermission::ACTION_READ) {
                 if (!empty($permission->entity_id)) {
                     $ids[] = $permission->entity_id;
                 } else {
-                    $types[] = $permission->type();
+                    $types[] = $permission->entityType->code;
                 }
             }
         }

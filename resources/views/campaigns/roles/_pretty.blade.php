@@ -33,7 +33,7 @@ $first = true;
             @foreach ($permissions as $perm)
                 <div class="col-sm-2 text-center">
                     <div class="pretty p-icon p-toggle p-plain" title="{{ __('campaigns.roles.permissions.actions.' . $perm['action']) }}" data-toggle="tooltip">
-                        {!! Form::checkbox('permissions[' . $perm['key'] . ']', $entity, $perm['enabled'], ['data-action' => $perm['action']]) !!}
+                        {!! Form::checkbox('permissions[]', $perm['entity_type_id'] . '_' .  $perm['action_id'], $perm['enabled'], ['data-action' => $perm['action']]) !!}
                         <div class="state p-success-o p-on">
                             <i class="icon {{ \Illuminate\Support\Arr::first($perm['icons']) }}"></i>
                             <label class="visible-xs">

@@ -1,3 +1,4 @@
+<?php use App\Models\CampaignPermission; ?>
 @extends('layouts.' . ($ajax ? 'ajax' : 'app'), [
     'title' => __('crud.permissions.title', ['name' => $entity->name]),
     'description' => '',
@@ -13,7 +14,8 @@
     @inject('permissionService', 'App\Services\PermissionService')
 @php
     /** @var \App\Services\PermissionService $permissionService */
-    $permissions = $permissionService->type($entity->type)->entityPermissions($entity);
+    $permissions = $permissionService->type($entity->typeId())->entityPermissions($entity);
+
 @endphp
 
     <div class="panel panel-default">
@@ -29,7 +31,7 @@
             @include('partials.errors')
 
             @notEnv('shadow')
-            {!! Form::open(['route' => ['entities.permissions', $entity->id], 'method'=>'POST', 'data-shortcut' => "1"]) !!}
+            {!! Form::open(['route' => ['entities.permissions', $entity->id], 'method' => 'POST', 'data-shortcut' => 1]) !!}
             @endif
             <table id="crud_permissions" class="table table-hover export-hidden">
                 <tbody>
@@ -41,10 +43,10 @@
                         <td>{{ $role->name }}</td>
                         <td @if($role->is_public) colspan="4"@endif>
                             <label>
-                                {!! Form::checkbox('role[' . $role->id . '][]', 'read', !empty($permissions['role'][$role->id]['read'])) !!}
+                                {!! Form::checkbox('role[' . $role->id . '][]', CampaignPermission::ACTION_READ, !empty($permissions['role'][$role->id][CampaignPermission::ACTION_READ])) !!}
                                 <span class="hidden-xs hidden-sm">{{ __('crud.permissions.actions.read') }}</span>
 
-                                @if ($permissionService->inherited('read', $role->id))
+                                @if ($permissionService->inherited(CampaignPermission::ACTION_READ, $role->id))
                                     <i class="text-green fa fa-check-circle" title="{{ __('crud.permissions.inherited') }}" data-toggle="tooltip"></i>
                                 @endif
                             </label>
@@ -52,30 +54,30 @@
                         @if (!$role->is_public)
                         <td>
                             <label>
-                                {!! Form::checkbox('role[' . $role->id . '][]', 'edit', !empty($permissions['role'][$role->id]['edit'])) !!}
+                                {!! Form::checkbox('role[' . $role->id . '][]', CampaignPermission::ACTION_EDIT, !empty($permissions['role'][$role->id][CampaignPermission::ACTION_EDIT])) !!}
                                 <span class="hidden-xs hidden-sm">{{ __('crud.permissions.actions.edit') }}</span>
 
-                                @if ($permissionService->inherited('edit', $role->id))
+                                @if ($permissionService->inherited(CampaignPermission::ACTION_EDIT, $role->id))
                                     <i class="text-green fa fa-check-circle" title="{{ __('crud.permissions.inherited') }}" data-toggle="tooltip"></i>
                                 @endif
                             </label>
                         </td>
                         <td>
                             <label>
-                                {!! Form::checkbox('role[' . $role->id . '][]', 'delete', !empty($permissions['role'][$role->id]['delete'])) !!}
+                                {!! Form::checkbox('role[' . $role->id . '][]', CampaignPermission::ACTION_DELETE, !empty($permissions['role'][$role->id][CampaignPermission::ACTION_DELETE])) !!}
                                 <span class="hidden-xs hidden-sm">{{ __('crud.permissions.actions.delete') }}</span>
 
-                                @if ($permissionService->inherited('delete', $role->id))
+                                @if ($permissionService->inherited(CampaignPermission::ACTION_DELETE, $role->id))
                                     <i class="text-green fa fa-check-circle" title="{{ __('crud.permissions.inherited') }}" data-toggle="tooltip"></i>
                                 @endif
                             </label>
                         </td>
                         <td>
                             <label>
-                                {!! Form::checkbox('role[' . $role->id . '][]', 'entity-note', !empty($permissions['role'][$role->id]['entity-note'])) !!}
+                                {!! Form::checkbox('role[' . $role->id . '][]', CampaignPermission::ACTION_ENTITY_NOTE, !empty($permissions['role'][$role->id][CampaignPermission::ACTION_ENTITY_NOTE])) !!}
                                 <span class="hidden-xs hidden-sm">{{ __('crud.permissions.actions.entity_note') }}</span>
 
-                                @if ($permissionService->inherited('entity-note', $role->id))
+                                @if ($permissionService->inherited(CampaignPermission::ACTION_ENTITY_NOTE, $role->id))
                                     <i class="text-green fa fa-check-circle" title="{{ __('crud.permissions.inherited') }}" data-toggle="tooltip"></i>
                                 @endif
                             </label>
@@ -95,48 +97,48 @@
                             <td>{{ $member->user->name }}</td>
                             <td>
                                 <label>
-                                    {!! Form::checkbox('user[' . $member->user_id . '][]', 'read', !empty($permissions['user'][$member->user_id]['read'])) !!}
+                                    {!! Form::checkbox('user[' . $member->user_id . '][]', CampaignPermission::ACTION_READ, !empty($permissions['user'][$member->user_id][CampaignPermission::ACTION_READ])) !!}
                                     <span class="hidden-xs hidden-sm">{{ __('crud.permissions.actions.read') }}</span>
 
-                                    @if ($permissionService->inherited('read', 0, $member->user_id))
+                                    @if ($permissionService->inherited(CampaignPermission::ACTION_READ, 0, $member->user_id))
                                         <i class="text-green fa fa-check-circle" title="{{ __('crud.permissions.inherited_by', [
-                               'role' => e($permissionService->inheritedRole('read', $member->user_id))
+                               'role' => e($permissionService->inheritedRole(CampaignPermission::ACTION_READ, $member->user_id))
                            ]) }}" data-toggle="tooltip"></i>
                                     @endif
                                 </label>
                             </td>
                             <td>
                                 <label>
-                                    {!! Form::checkbox('user[' . $member->user_id . '][]', 'edit', !empty($permissions['user'][$member->user_id]['edit'])) !!}
+                                    {!! Form::checkbox('user[' . $member->user_id . '][]', CampaignPermission::ACTION_EDIT, !empty($permissions['user'][$member->user_id][CampaignPermission::ACTION_EDIT])) !!}
                                     <span class="hidden-xs hidden-sm">{{ __('crud.permissions.actions.edit') }}</span>
 
-                                    @if ($permissionService->inherited('edit', 0, $member->user_id))
+                                    @if ($permissionService->inherited(CampaignPermission::ACTION_EDIT, 0, $member->user_id))
                                         <i class="text-green fa fa-check-circle" title="{{ __('crud.permissions.inherited_by', [
-                               'role' => e($permissionService->inheritedRole('edit', $member->user_id))
+                               'role' => e($permissionService->inheritedRole(CampaignPermission::ACTION_EDIT, $member->user_id))
                            ]) }}" data-toggle="tooltip"></i>
                                     @endif
                                 </label>
                             </td>
                             <td>
                                 <label>
-                                    {!! Form::checkbox('user[' . $member->user_id . '][]', 'delete', !empty($permissions['user'][$member->user_id]['delete'])) !!}
+                                    {!! Form::checkbox('user[' . $member->user_id . '][]', CampaignPermission::ACTION_DELETE, !empty($permissions['user'][$member->user_id][CampaignPermission::ACTION_DELETE])) !!}
                                     <span class="hidden-xs hidden-sm">{{ __('crud.permissions.actions.delete') }}</span>
 
-                                    @if ($permissionService->inherited('delete', 0, $member->user_id))
+                                    @if ($permissionService->inherited(CampaignPermission::ACTION_DELETE, 0, $member->user_id))
                                         <i class="text-green fa fa-check-circle" title="{{ __('crud.permissions.inherited_by', [
-                               'role' => e($permissionService->inheritedRole('delete', $member->user_id))
+                               'role' => e($permissionService->inheritedRole(CampaignPermission::ACTION_DELETE, $member->user_id))
                            ]) }}" data-toggle="tooltip"></i>
                                     @endif
                                 </label>
                             </td>
                             <td>
                                 <label>
-                                    {!! Form::checkbox('user[' . $member->user_id . '][]', 'entity-note', !empty($permissions['user'][$member->user_id]['entity-note'])) !!}
+                                    {!! Form::checkbox('user[' . $member->user_id . '][]', CampaignPermission::ACTION_ENTITY_NOTE, !empty($permissions['user'][$member->user_id][CampaignPermission::ACTION_ENTITY_NOTE])) !!}
                                     <span class="hidden-xs hidden-sm">{{ __('crud.permissions.actions.entity_note') }}</span>
 
-                                    @if ($permissionService->inherited('entity-note', 0, $member->user_id))
+                                    @if ($permissionService->inherited(CampaignPermission::ACTION_ENTITY_NOTE, 0, $member->user_id))
                                         <i class="text-green fa fa-check-circle" title="{{ __('crud.permissions.inherited_by', [
-                               'role' => e($permissionService->inheritedRole('entity-note', $member->user_id))
+                               'role' => e($permissionService->inheritedRole(CampaignPermission::ACTION_ENTITY_NOTE, $member->user_id))
                            ]) }}" data-toggle="tooltip"></i>
                                     @endif
                                 </label>

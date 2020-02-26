@@ -16,9 +16,22 @@ use Illuminate\Support\Str;
  * @property integer $user_id
  * @property string $key
  * @property string $table_name
+ * @property int $action
+ * @property int $entity_type_id
+ * @property EntityType $entityType
  */
 class CampaignPermission extends Model
 {
+    /**
+     * Action constants
+     */
+    public const ACTION_READ = 1;
+    public const ACTION_EDIT = 2;
+    public const ACTION_ADD = 3;
+    public const ACTION_DELETE = 4;
+    public const ACTION_ENTITY_NOTE = 5;
+    public const ACTION_PERMISSION = 6;
+
     /**
      * @var bool|array
      */
@@ -29,10 +42,12 @@ class CampaignPermission extends Model
      */
     protected $fillable = [
         'campaign_role_id',
-        'key',
-        'table_name',
+        //'key',
+        //'table_name',
         'user_id',
         'entity_id',
+        'action',
+        'entity_type_id',
     ];
 
     /**
@@ -60,6 +75,15 @@ class CampaignPermission extends Model
     public function entity()
     {
         return $this->belongsTo('App\Models\Entity', 'entity_id');
+    }
+
+    /**
+     * Entity Type
+     * @return mixed
+     */
+    public function entityType()
+    {
+        return $this->belongsTo('App\Models\EntityType', 'entity_type_id');
     }
 
     /**

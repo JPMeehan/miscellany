@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class EntityType
+ * @package App\Models
+ *
+ * @property int $id
+ * @property string $code
+ */
 class EntityType extends Model
 {
     public $fillable = [

@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Facades\UserPermission;
+use App\Models\CampaignPermission;
 
 /**
  * Trait EntityAclTrait
@@ -21,7 +22,7 @@ trait EntityMentionAclTrait
      * @param mixed $type
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeEntityAcl($query, $action = 'read', $user = null)
+    public function scopeEntityAcl($query, int $action = CampaignPermission::ACTION_READ, $user = null)
     {
         // Use the User Permission Service to handle all of this easily.
         /** @var \App\Services\UserPermission $service */
@@ -48,7 +49,7 @@ trait EntityMentionAclTrait
      * @param null $user
      * @return mixed
      */
-    public function scopeEntityNoteAcl($query, $action = 'read', $user = null)
+    public function scopeEntityNoteAcl($query, int $action = CampaignPermission::ACTION_READ, $user = null)
     {
         // Use the User Permission Service to handle all of this easily.
         /** @var \App\Services\UserPermission $service */
